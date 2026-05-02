@@ -32,7 +32,8 @@
       font-weight: bold;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 10px;
       margin-top: 6px;
@@ -46,12 +47,14 @@
       background: #eef7ee;
       border-left: 5px solid #3c9d3c;
       font-size: 18px;
+      line-height: 1.5;
     }
 
     .note {
       margin-top: 12px;
       font-size: 14px;
       color: #555;
+      line-height: 1.5;
     }
 
     button {
@@ -109,6 +112,17 @@
     <label for="extra">Extra rope allowance (%)</label>
     <input id="extra" type="number" value="15" step="1" />
 
+    <label for="price">Rope price</label>
+    <input id="price" type="number" value="0" step="0.01" />
+
+    <label for="priceUnit">Price is for</label>
+    <select id="priceUnit">
+      <option value="1">1 meter</option>
+      <option value="10">10 meters</option>
+      <option value="50">50 meters</option>
+      <option value="100">100 meters</option>
+    </select>
+
     <button onclick="calculate()">Calculate</button>
 
     <div class="result" id="result">
@@ -117,7 +131,8 @@
 
     <div class="note">
       Formula: number of wraps × circumference of post.<br>
-      Wraps = post height ÷ rope thickness.
+      Wraps = post height ÷ rope thickness.<br>
+      Circumference = π × post diameter.
     </div>
   </div>
 
@@ -133,6 +148,9 @@
       const ropeUnit = parseFloat(document.getElementById("ropeUnit").value);
 
       const extra = parseFloat(document.getElementById("extra").value);
+
+      const price = parseFloat(document.getElementById("price").value);
+      const priceUnit = parseFloat(document.getElementById("priceUnit").value);
 
       if (
         isNaN(height) || isNaN(diameter) || isNaN(rope) ||
@@ -154,9 +172,23 @@
       const ropeLengthM = ropeLengthMm / 1000;
       const ropeWithExtra = ropeLengthM * (1 + extra / 100);
 
+      let priceOutput = "";
+
+      if (!isNaN(price) && price > 0 && !isNaN(priceUnit) && priceUnit > 0) {
+        const pricePerMeter = price / priceUnit;
+        const totalPrice = ropeWithExtra * pricePerMeter;
+
+        priceOutput = `
+          <br>
+          Price per meter: <strong>${pricePerMeter.toFixed(2)}</strong><br>
+          Estimated cost: <strong>${totalPrice.toFixed(2)}</strong>
+        `;
+      }
+
       document.getElementById("result").innerHTML = `
         Rope needed: <strong>${ropeLengthM.toFixed(2)} m</strong><br>
         With ${extra}% extra: <strong>${ropeWithExtra.toFixed(2)} m</strong>
+        ${priceOutput}
       `;
     }
 
