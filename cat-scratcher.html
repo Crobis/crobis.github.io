@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sisal Rope Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 520px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .result {
+      margin-top: 24px;
+      padding: 16px;
+      background: #eef7ee;
+      border-left: 5px solid #3c9d3c;
+      font-size: 18px;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+
+    button:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Sisal Rope Calculator</h1>
+    <p>Calculate how much rope you need to wrap a cat scratching post.</p>
+
+    <label for="height">Post height</label>
+    <input id="height" type="number" value="2.5" step="0.01" />
+
+    <label for="heightUnit">Height unit</label>
+    <select id="heightUnit">
+      <option value="1000">meters</option>
+      <option value="10">centimeters</option>
+      <option value="1">millimeters</option>
+    </select>
+
+    <label for="diameter">Post diameter / width</label>
+    <input id="diameter" type="number" value="10" step="0.1" />
+
+    <label for="diameterUnit">Diameter unit</label>
+    <select id="diameterUnit">
+      <option value="1">millimeters</option>
+      <option value="10">centimeters</option>
+      <option value="1000">meters</option>
+    </select>
+
+    <label for="rope">Rope thickness</label>
+    <input id="rope" type="number" value="5" step="0.1" />
+
+    <label for="ropeUnit">Rope unit</label>
+    <select id="ropeUnit">
+      <option value="1">millimeters</option>
+      <option value="10">centimeters</option>
+    </select>
+
+    <label for="extra">Extra rope allowance (%)</label>
+    <input id="extra" type="number" value="15" step="1" />
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result">
+      Rope needed: —
+    </div>
+
+    <div class="note">
+      Formula: number of wraps × circumference of post.<br>
+      Wraps = post height ÷ rope thickness.
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const height = parseFloat(document.getElementById("height").value);
+      const heightUnit = parseFloat(document.getElementById("heightUnit").value);
+
+      const diameter = parseFloat(document.getElementById("diameter").value);
+      const diameterUnit = parseFloat(document.getElementById("diameterUnit").value);
+
+      const rope = parseFloat(document.getElementById("rope").value);
+      const ropeUnit = parseFloat(document.getElementById("ropeUnit").value);
+
+      const extra = parseFloat(document.getElementById("extra").value);
+
+      if (
+        isNaN(height) || isNaN(diameter) || isNaN(rope) ||
+        height <= 0 || diameter <= 0 || rope <= 0
+      ) {
+        document.getElementById("result").innerText =
+          "Please enter valid positive numbers.";
+        return;
+      }
+
+      const heightMm = height * heightUnit;
+      const diameterMm = diameter * diameterUnit;
+      const ropeMm = rope * ropeUnit;
+
+      const circumferenceMm = Math.PI * diameterMm;
+      const wraps = heightMm / ropeMm;
+      const ropeLengthMm = wraps * circumferenceMm;
+
+      const ropeLengthM = ropeLengthMm / 1000;
+      const ropeWithExtra = ropeLengthM * (1 + extra / 100);
+
+      document.getElementById("result").innerHTML = `
+        Rope needed: <strong>${ropeLengthM.toFixed(2)} m</strong><br>
+        With ${extra}% extra: <strong>${ropeWithExtra.toFixed(2)} m</strong>
+      `;
+    }
+
+    calculate();
+  </script>
+
+</body>
+</html>
